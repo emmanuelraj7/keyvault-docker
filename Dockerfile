@@ -5,6 +5,8 @@ WORKDIR /app
 RUN pip install -r requirements.txt
 
 ARG SECRET
+ARG USER
+ENV SA_USER $USER
 ENV SA_PASSWORD $SECRET
 
 EXPOSE 8080
