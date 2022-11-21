@@ -3,8 +3,16 @@ import socket
 import os
 import logging
 
+env_user = os.environ.get('SA_USER')
+print("environment variable user is:", env_user)
+
 env_password = os.environ.get('SA_PASSWORD')
-print("environment variable is:", env_password)
+print("environment variable password is:", env_password)
+
+if env_user == 'abcd':
+                    print('user matching')
+else:
+    print('user not matching')    
 
 if env_password == 'abcd':
                     print('password matching')
