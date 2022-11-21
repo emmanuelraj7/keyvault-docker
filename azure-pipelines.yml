@@ -11,7 +11,7 @@ resources:
 
 variables:
   # Container registry service connection established during pipeline creation
-  dockerRegistryServiceConnection: 'connection-string'
+  dockerRegistryServiceConnection: 'service connection'
   imageRepository: 'keyvaultdocker'
   containerRegistry: 'acrname.azurecr.io'
   dockerfilePath: '$(Build.SourcesDirectory)/Dockerfile'
@@ -33,18 +33,25 @@ stages:
     - task: AzureKeyVault@2
       displayName: Get Secrets from Key Vault
       inputs:
-        azureSubscription: 'serviceconnection-name'
-        KeyVaultName: 'keyvaultname'
+        azureSubscription: 'service-connection-name'
+        KeyVaultName: 'name-kv'
         SecretsFilter: '*' 
         RunAsPreJob: false
     - task: Docker@2
-      displayName: Build and push an image to container registry
+      displayName: Build
       inputs:
-        command: buildAndPush
-        repository: $(imageRepository)
-        dockerfile: $(dockerfilePath)
+        command: build
         containerRegistry: $(dockerRegistryServiceConnection)
-        arguments: --build-arg SECRET=$(testpassword)
-        tags: |
-          $(tag)
+        repository: $(imageRepository)
+        tags: $(tag)
+        arguments: 
+            --build-arg SECRET=$(testpassword)
+            --build-arg USER=$(testpassword)
+    - task: Docker@2
+      displayName: Push
+      inputs:
+        command: push
+        containerRegistry: $(dockerRegistryServiceConnection)
+        repository: $(imageRepository)
+        tags: $(tag)
     
